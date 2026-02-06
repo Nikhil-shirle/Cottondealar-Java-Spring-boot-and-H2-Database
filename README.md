@@ -1,69 +1,58 @@
-Cotton King is a complete web-based management application designed for cotton dealers to manage customer cotton purchases, gin sales, transactions, and market rate analysis in one place. This project helps automate daily cotton trading operations with a clean UI, secure login system, smart filtering, and graphical reports.
+# Cotton Dealer Management App
 
-The application provides an authorized login system to ensure only verified users can access the dashboard. It includes a stylish navigation bar with modules like Home, Customer, Gin, and Transactions for smooth workflow management.
+A web application for cotton dealers to manage customers, cotton purchases, and financial transactions.
 
-🔑 Key Features
+## Features
+- **Customer Management**: Add and view customers.
+- **Cotton Entries**: Record cotton purchases (Weight, Rate, Total Amount).
+- **Transactions**: Record payments (TAKE/GIVE).
+- **Balance Calculation**: Automatically calculates net balance for each customer.
+- **Dashboard**: High-level summary of business.
 
-✅ Secure Login Authentication (Authorized Access)
+## Tech Stack
+- **Backend**: Java, Spring Boot (Web, Data JPA)
+- **Database**: MySQL
+- **Frontend**: HTML5, Bootstrap 5, JavaScript (Fetch API)
 
-✅ Stylish Navbar & User-Friendly Dashboard
+## Prerequisites
+1. **Java JDK 17+** installed.
+2. **Maven** installed.
+3. **MySQL Server** installed and running.
 
-✅ Live Cotton Market Rate Display
+## Setup Instructions
 
-✅ Customer Management System
+1. **Database Setup**:
+   - Create a database named `cotton_db` in MySQL.
+     ```sql
+     CREATE DATABASE cotton_db;
+     ```
+   - Update `src/main/resources/application.properties` if your MySQL username/password is different from `root`/`root`.
 
-Add customer details (Name, Contact, Address)
+2. **Build the Project**:
+   ```sh
+   mvn clean install
+   ```
 
-Record multiple cotton purchases for the same customer
+3. **Run the Application**:
+   ```sh
+   mvn spring-boot:run
+   ```
+   The application will start on `http://localhost:8080`.
 
-Auto-calculate total price based on quantity and price/kg
+## Application Structure
+- **Backend**: `src/main/java/com/cottondealer/app`
+  - `model`: JPA Entites
+  - `repository`: Data access
+  - `service`: Business logic
+  - `controller`: REST APIs
+- **Frontend**: `src/main/resources/static`
+  - `*.html`: Pages
+  - `js/app.js`: Logic
+  - `css/styles.css`: Styles
 
-Real-time date auto-fill during entry
-
-✅ Payment Tracking System
-
-Supports Cash, Check, and Online Payments
-
-If payment type is Check → stores check number + bank account
-
-If payment type is Online → supports GPay, PhonePe, Paytm
-
-Tracks paid amount and remaining balance (before & after purchase)
-
-✅ Gin Sales Module
-
-Record cotton selling transactions to gin
-
-Track quantity sold, selling price/kg, and total amount
-
-✅ Transaction Management
-
-View all customer buy and gin sell records
-
-Filter transactions by date, cotton type, customer, and price
-
-✅ Charts & Market Analysis
-
-Pie/Donut charts for cotton bought from customers
-
-Pie/Donut charts for cotton sold to gin
-
-Filterable charts by date/day/month, cotton type, and price/kg
-
-Line chart for cotton market price trend analysis
-
-🛠️ Tech Stack
-
-Backend: Java, Spring Boot
-
-Security: Spring Security (Login Authentication)
-
-Database: MySQL
-
-Frontend: HTML, CSS, Bootstrap, JavaScript
-
-Charts: Chart.js
-
-🎯 Project Goal
-
-The main goal of Cotton King is to provide a digital solution for cotton dealers to reduce manual work, avoid calculation errors, manage customer records efficiently, and gain insights through visual analytics.
+## APIs
+- `GET /api/customers` - List all customers with balance.
+- `GET /api/customers/{id}` - Get single customer details.
+- `POST /api/customers` - Create customer.
+- `POST /api/entries` - Add cotton entry.
+- `POST /api/transactions` - Add payment transaction.
