@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container fade-in">
+        <div style="margin-bottom: 2rem;">
+            <h1 style="margin: 0;">Transactions & Purchase Analysis</h1>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Financial overview & filtering</p>
+        </div>
+
+        <!-- Filter Form -->
+        <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+            <form th:action="@{/transactions}" method="get"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; align-items: end;">
+                <div>
+                    <label>Filter by Day</label>
+                    <input type="date" name="searchDate" th:value="${searchDate}" class="form-control">
+                </div>
+                <div>
+                    <label>Filter by Month</label>
+                    <input type="month" name="searchMonth" th:value="${searchMonth}" class="form-control">
+                </div>
+                <div>
+                    <label>Price / Kg</label>
+                    <input type="number" step="0.01" name="searchPrice" th:value="${searchPrice}" class="form-control"
+                        placeholder="Rate">
+                </div>
+                <div>
+                    <label>Address</label>
+                    <input type="text" name="searchAddress" th:value="${searchAddress}" class="form-control"
+                        placeholder="Location">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn-primary" style="width: 100%;">Filter</button>
+                    <a href="/transactions"
+                        style="min-width: 80px; text-align: center; border: 1px solid #ddd; padding: 0.5rem; border-radius: 8px; text-decoration: none; color: #555;">Clear</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid-4" style="margin-bottom: 2rem;">
+            <div class="card stat-card">
+                <span class="stat-label">Total Spent (Purchases)</span>
+                <span class="stat-val text-danger" style="color: var(--danger);" th:text="'₹ ' + ${totalBought}">₹
+                    0.0</span>
+            </div>
+            <div class="card stat-card">
+                <span class="stat-label">Total Revenue (Sales)</span>
+                <span class="stat-val text-success" style="color: var(--success);" th:text="'₹ ' + ${totalSold}">₹
+                    0.0</span>
+            </div>
+            <div class="card stat-card">
+                <span class="stat-label">Net Profit / Loss</span>
+                <span class="stat-val" th:style="${netProfit >= 0 ? 'color: var(--success)' : 'color: var(--danger)'}"
+                    th:text="'₹ ' + ${netProfit}">₹ 0.0</span>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="card">
+                <h3>Analysis by Type</h3>
+                <canvas id="typeChart"></canvas>
+            </div>
+            <!-- Move one summary card or keep layout balanced? Putting it in a new row is safer -->
+        </div>
+
+        <!-- Purchase Chart -->
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                // Purchase Chart
+                const pCtx = document.getElementById('typeChart').getContext('2d');
+                /*[[${pieLabels}]]*/ const pLabels = [[${ pieLabels }]];
+                /*[[${pieData}]]*/ const pData = [[${ pieData }]];
+
+                new Chart(pCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: pLabels,
+                        datasets: [{
+                            data: pData,
+                            backgroundColor: ['#4caf50', '#2196f3', '#ff9800', '#f44336', '#9c27b0'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                });
+
+                // Sales Chart
+                const sCtx = document.getElementById('salesChart').getContext('2d');
+                /*[[${salesPieLabels}]]*/ const sLabels = [[${ salesPieLabels }]];
+                /*[[${salesPieData}]]*/ const sData = [[${ salesPieData }]];
+
+                new Chart(sCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: sLabels,
+                        datasets: [{
+                            data: sData,
+                            backgroundColor: ['#009688', '#E91E63', '#3F51B5', '#FFC107', '#795548'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                });
+            });
+        </script>
+
+        <!-- Sales Filter & Chart -->
+        <h2 style="margin-top: 3rem; margin-bottom: 1rem;">Sales Analysis (Gin Sales)</h2>
+        <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+            <form th:action="@{/transactions}" method="get"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; align-items: end;">
+
+                <!-- Preserve Purchase Filters (Hidden) -->
+                <input type="hidden" name="searchDate" th:value="${searchDate}">
+                <input type="hidden" name="searchMonth" th:value="${searchMonth}">
+                <input type="hidden" name="searchPrice" th:value="${searchPrice}">
+                <input type="hidden" name="searchAddress" th:value="${searchAddress}">
+
+                <div>
+                    <label>Filter by Day</label>
+                    <input type="date" name="saleDate" th:value="${saleDate}" class="form-control">
+                </div>
+                <div>
+                    <label>Filter by Month</label>
+                    <input type="month" name="saleMonth" th:value="${saleMonth}" class="form-control">
+                </div>
+                <div>
+                    <label>Gin Name</label>
+                    <input type="text" name="saleGinName" th:value="${saleGinName}" class="form-control"
+                        placeholder="Search Gin...">
+                </div>
+                <div>
+                    <label>Price / Kg</label>
+                    <input type="number" step="0.01" name="salePrice" th:value="${salePrice}" class="form-control"
+                        placeholder="Rate">
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn-primary" style="width: 100%;">Filter Sales</button>
+                    <a href="/transactions"
+                        style="min-width: 80px; text-align: center; border: 1px solid #ddd; padding: 0.5rem; border-radius: 8px; text-decoration: none; color: #555;">Clear</a>
+                </div>
+            </form>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="card">
+                <h3>Sales by Type</h3>
+                <canvas id="salesChart"></canvas>
+            </div>
+            <!-- Space for more stats or empty -->
+        </div>
+
+        <div class="grid-2">
+            <div>
+                <h3>Recent Customer Purchases</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${purchases}">
+                                <td th:text="${p.buyDate}">Date</td>
+                                <td th:text="${p.customer.customerName}">Name</td>
+                                <td th:text="${p.quantityKg}">100</td>
+                                <td th:text="${p.totalPrice}">5000</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(purchases)}">
+                                <td colspan="4" style="text-align: center; color: var(--text-muted);">No records</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h3>Recent Gin Sales</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Gin</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s : ${sales}">
+                                <td th:text="${s.saleDate}">Date</td>
+                                <td th:text="${s.ginName}">Name</td>
+                                <td th:text="${s.quantityKg}">100</td>
+                                <td th:text="${s.totalPrice}">6000</td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(sales)}">
+                                <td colspan="4" style="text-align: center; color: var(--text-muted);">No records</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer}"></div>
+
+</body>
+
+</html>

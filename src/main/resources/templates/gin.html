@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container fade-in">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1 style="margin: 0;">Gin Sales</h1>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Track sales to Ginning factories</p>
+            </div>
+            <button onclick="document.getElementById('addSaleModal').style.display='block'" class="btn-primary">
+                + New Sale
+            </button>
+        </div>
+
+        <!-- Search Filter -->
+        <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem;">
+            <form th:action="@{/gins}" method="get" style="display: flex; gap: 1rem; width: 100%;">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="Search gin name..."
+                    class="form-control" style="max-width: 300px; margin: 0;">
+                <button type="submit" class="btn-primary" style="padding: 0.5rem 1.5rem;">Search</button>
+                <a th:if="${keyword != null}" href="/gins"
+                    style="align-self: center; color: var(--text-muted); text-decoration: none;">Clear</a>
+            </form>
+        </div>
+
+        <!-- Sales Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Gin Name</th>
+                        <th>Cotton Type</th>
+                        <th>Qty (Kg)</th>
+                        <th>Rate/Kg</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="sale : ${sales}">
+                        <td th:text="${sale.saleDate}">2026-01-01</td>
+                        <td th:text="${sale.ginName}">ABC Gin</td>
+                        <td th:text="${sale.cottonType}">Type</td>
+                        <td th:text="${sale.quantityKg}">100</td>
+                        <td th:text="${sale.sellPricePerKg}">60</td>
+                        <td th:text="${sale.totalPrice}">6000</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(sales)}">
+                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            No sales recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Sale Modal -->
+        <div id="addSaleModal"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000;">
+            <div
+                style="background: var(--bg-card); width: 100%; max-width: 500px; margin: 10vh auto; padding: 2rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <h2 style="margin-top: 0;">Record Gin Sale</h2>
+                <form th:action="@{/gins/sale}" th:object="${newSale}" method="post">
+                    <label>Gin Factory Name</label>
+                    <input type="text" th:field="*{ginName}" class="form-control" required>
+
+                    <label>Date</label>
+                    <input type="date" th:field="*{saleDate}" class="form-control" required>
+
+                    <label>Cotton Type</label>
+                    <select th:field="*{cottonType}" class="form-control">
+                        <option value="Long Staple">Long Staple</option>
+                        <option value="Medium Staple">Medium Staple</option>
+                    </select>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label>Quantity (Kg)</label>
+                            <input type="number" step="0.01" th:field="*{quantityKg}" class="form-control" required>
+                        </div>
+                        <div>
+                            <label>Selling Price / Kg</label>
+                            <input type="number" step="0.01" th:field="*{sellPricePerKg}" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="submit" class="btn-primary" style="flex: 1;">Save Sale</button>
+                        <button type="button" onclick="document.getElementById('addSaleModal').style.display='none'"
+                            style="flex: 1; background: transparent; border: 1px solid var(--secondary); color: white; padding: 0.75rem; border-radius: 8px; cursor: pointer;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments :: footer}"></div>
+
+</body>
+
+</html>

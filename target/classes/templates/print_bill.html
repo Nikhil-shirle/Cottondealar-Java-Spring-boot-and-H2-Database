@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Purchase Bill</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            padding: 40px;
+        }
+
+        .bill-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+
+        .bill-header h1 {
+            margin: 0;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .bill-header p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .info-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .info-col h3 {
+            margin-top: 0;
+            font-size: 14px;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .info-col p {
+            margin: 0;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f9f9f9;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .total-row td {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 2px solid #000;
+        }
+
+        .footer {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .footer div {
+            width: 200px;
+            text-align: center;
+        }
+
+        .footer div span {
+            display: block;
+            margin-top: 40px;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            font-size: 12px;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="no-print" onclick="window.print()"
+        style="position: absolute; top: 20px; right: 20px; padding: 10px 20px; background: #000; color: #fff; border: none; cursor: pointer;">
+        Print Bill
+    </button>
+
+    <div class="bill-header">
+        <h1>Cotton King Traders</h1>
+        <p>Reliable Cotton Dealer & Supplier</p>
+        <p>At Hingani bk (Post Dahihanda) Tal- District Akola, Maharashtra, 444111</p>
+    </div>
+
+    <div class="info-section">
+        <div class="info-col">
+            <h3>Bill To (Customer)</h3>
+            <p th:text="${customer.customerName}">Customer Name</p>
+            <p style="font-weight: normal; font-size: 14px;" th:text="${customer.address}">Address</p>
+            <p style="font-weight: normal; font-size: 14px;" th:text="'Ph: ' + ${customer.contactNo}">Phone</p>
+        </div>
+        <div class="info-col" style="text-align: right;">
+            <h3>Bill Details</h3>
+            <p th:text="'Date: ' + ${billDate}">Date: 2026-01-01</p>
+            <p th:text="'Bill No: #' + ${purchase.purchaseId}">Bill No: #101</p>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Rate (Per Kg)</th>
+                <th>Quantity (Kg)</th>
+                <th>Total Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td th:text="'Cotton - ' + ${purchase.cottonType}">Cotton - Long Staple</td>
+                <td th:text="'₹ ' + ${purchase.pricePerKg}">₹ 60.00</td>
+                <td th:text="${purchase.quantityKg} + ' Kg'">100 Kg</td>
+                <td th:text="'₹ ' + ${purchase.totalPrice}">₹ 6000.00</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="3" style="text-align: right;">Current Bill Amount</td>
+                <td th:text="'₹ ' + ${purchase.totalPrice}">₹ 6000.00</td>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: right; color: #555; font-size: 0.9em;">Total Purchased (Up to Date)
+                </td>
+                <td th:text="'₹ ' + ${totalPurchase}" style="color: #555;">₹ 15000.00</td>
+            </tr>
+            <tr>
+                <td colspan="3" style="text-align: right; color: #555; font-size: 0.9em;">Total Paid (Up to Date)</td>
+                <td th:text="'₹ ' + ${totalPaid}" style="color: #555;">₹ 5000.00</td>
+            </tr>
+            <tr style="font-size: 1.1em; background-color: #f8f9fa;">
+                <td colspan="3" style="text-align: right; font-weight: bold;">Balance Pending</td>
+                <td th:text="'₹ ' + ${totalBalance}" style="font-weight: bold; color: #dc2626;">₹ 10000.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="margin-top: 30px;">
+        <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 10px;">Past Transactions History</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Bill No</th>
+                    <th>Cotton Type</th>
+                    <th>Qty (Kg)</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${purchases}">
+                    <td th:text="${p.buyDate}">2026-01-01</td>
+                    <td th:text="'#' + ${p.purchaseId}">#100</td>
+                    <td th:text="${p.cottonType}">Cotton</td>
+                    <td th:text="${p.quantityKg}">100</td>
+                    <td th:text="'₹ ' + ${p.totalPrice}">₹ 5000</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <div>
+            <span>Customer Signature</span>
+        </div>
+        <div>
+            <span>Authorized Signatory</span>
+        </div>
+    </div>
+
+</body>
+
+</html>

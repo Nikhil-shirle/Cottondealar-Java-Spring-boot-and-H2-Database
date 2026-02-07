@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotton King</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <nav class="navbar" th:fragment="navbar">
+        <a href="/" class="brand">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+            </svg>
+            Cotton King
+        </a>
+        <div class="nav-links">
+            <a href="/" class="nav-link">Dashboard</a>
+            <a href="/customers" class="nav-link">Customers</a>
+            <a href="/gins" class="nav-link">Gin Sales</a>
+            <a href="/transactions" class="nav-link">Transactions</a>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const path = window.location.pathname;
+                const links = document.querySelectorAll('.nav-link');
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (path === href || (href !== '/' && path.startsWith(href))) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        </script>
+        </div>
+    </nav>
+
+    <footer th:fragment="footer" style="text-align:center; padding: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+        &copy; 2026 Cotton King Management System
+    </footer>
+
+</body>
+
+</html>

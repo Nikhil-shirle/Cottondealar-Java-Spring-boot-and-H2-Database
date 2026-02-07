@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotton Dealer - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .stat-card {
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">Cotton Dealer Manager</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="customers.html">Customers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cotton-records.html">Cotton Records</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reports.html">Transactions</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Dashboard</h1>
+
+        <!-- Stats Row -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary stat-card h-100 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Customers</h5>
+                        <h1 class="display-4 fw-bold" id="totalCustomersCount">...</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success stat-card h-100 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Cotton (Kg)</h5>
+                        <h1 class="display-4 fw-bold" id="totalCottonWeight">...</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning text-dark stat-card h-100 shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Value (₹)</h5>
+                        <h1 class="display-4 fw-bold" id="totalValue">...</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts / Top Lists -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold">Top Villages (by Quantity)</div>
+                    <ul class="list-group list-group-flush" id="topVillagesList">
+                        <!-- Filled by JS -->
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold">Top Customers (by Value)</div>
+                    <ul class="list-group list-group-flush" id="topCustomersList">
+                        <!-- Filled by JS -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadDashboardStats);
+    </script>
+</body>
+
+</html>

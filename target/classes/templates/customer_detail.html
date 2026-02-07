@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments :: head}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container fade-in">
+        <div style="margin-bottom: 2rem;">
+            <a href="/customers" style="color: var(--text-muted); text-decoration: none;">&larr; Back to Customers</a>
+            <h1 th:text="${customer.customerName}" style="margin-top: 0.5rem; margin-bottom: 0.25rem;">Customer Name
+            </h1>
+            <p style="color: var(--text-muted);" th:text="${customer.address} + ' | ' + ${customer.contactNo}">Address |
+                Contact</p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid-4" style="margin-bottom: 2rem;">
+            <div class="card stat-card">
+                <span class="stat-label">Total Purchased</span>
+                <span class="stat-val" th:text="'₹ ' + ${totalPurchase}">₹ 0.0</span>
+            </div>
+            <div class="card stat-card">
+                <span class="stat-label">Total Paid</span>
+                <span class="stat-val text-success" style="color: var(--success);" th:text="'₹ ' + ${totalPaid}">₹
+                    0.0</span>
+            </div>
+            <div class="card stat-card" style="border-color: var(--danger);">
+                <span class="stat-label">Balance Pending</span>
+                <span class="stat-val text-danger" style="color: var(--danger);" th:text="'₹ ' + ${balance}">₹
+                    0.0</span>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- New Purchase Form -->
+            <div class="card">
+                <h3>Record Purchase</h3>
+                <form th:action="@{/customers/purchase}" th:object="${newPurchase}" method="post">
+                    <input type="hidden" th:field="*{customer}">
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label>Date</label>
+                            <input type="date" th:field="*{buyDate}" class="form-control">
+                        </div>
+                        <div>
+                            <label>Cotton Type</label>
+                            <select th:field="*{cottonType}" class="form-control">
+                                <option value="Long Staple">Long Staple</option>
+                                <option value="Medium Staple">Medium Staple</option>
+                                <option value="Short Staple">Short Staple</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label>Quantity (Kg)</label>
+                            <input type="number" step="0.01" th:field="*{quantityKg}" class="form-control" required
+                                placeholder="0.00">
+                        </div>
+                        <div>
+                            <label>Price / Kg</label>
+                            <input type="number" step="0.01" th:field="*{pricePerKg}" class="form-control" required
+                                placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%;">Add Purchase</button>
+                </form>
+            </div>
+
+            <!-- New Payment Form -->
+            <div class="card">
+                <h3>Record Payment</h3>
+                <form th:action="@{/customers/payment}" th:object="${newPayment}" method="post">
+                    <input type="hidden" th:field="*{customer}">
+
+                    <label>Date</label>
+                    <input type="date" th:field="*{paymentDate}" class="form-control">
+
+                    <label>Amount Paid</label>
+                    <input type="number" step="0.01" th:field="*{amountPaid}" class="form-control" required
+                        placeholder="₹ 0.00">
+
+                    <label>Method</label>
+                    <select th:field="*{paymentMethod}" class="form-control">
+                        <option value="Cash">Cash</option>
+                        <option value="Check">Check</option>
+                        <option value="Online">Online Transfer</option>
+                    </select>
+
+                    <button type="submit" class="btn-primary" style="background: var(--success); width: 100%;">Record
+                        Payment</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tables -->
+        <div style="margin-top: 3rem;">
+            <h3>Purchase History</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Qty (Kg)</th>
+                            <th>Rate/Kg</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${purchases}">
+                            <td th:text="${p.buyDate}">2026-01-01</td>
+                            <td th:text="${p.cottonType}">Type</td>
+                            <td th:text="${p.quantityKg}">100</td>
+                            <td th:text="${p.pricePerKg}">50</td>
+                            <td th:text="${p.totalPrice}">5000</td>
+                            <td>
+                                <a th:href="@{/customers/bill/{id}(id=${p.purchaseId})}" target="_blank"
+                                    style="padding: 4px 8px; background: #eee; text-decoration: none; color: #333; border-radius: 4px; font-size: 0.8rem;">
+                                    Print Bill
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <h3>Payment Ledger</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Method</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="pay : ${payments}">
+                            <td th:text="${pay.paymentDate}">2026-01-01</td>
+                            <td th:text="${pay.paymentMethod}">Cash</td>
+                            <td th:text="${pay.amountPaid}" style="color: var(--success);">5000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments :: footer}"></div>
+
+</body>
+
+</html>
